@@ -41,7 +41,7 @@ ALLOWED_HOSTS = []
 ALLOWED_HOSTS.extend(
     filter(
         None,
-        os.environ.get('ALLOWED_HOSTS_DEV', '').split(','),
+        os.environ.get('ALLOWED_HOSTS_DEPLOY', '').split(','),
     )
 )
 
