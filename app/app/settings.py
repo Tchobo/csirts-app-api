@@ -28,13 +28,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
+DEBUG = os.environ.get('DEBUG')
 
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS_DEPLOY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(int(os.getenv('DEBUG', 0)))
-
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS_DEV', '').split()
 
 
 
@@ -157,23 +154,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'core.User'
 
 # CORS
-CORS_ALLOWED_ORIGINS=[]
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS_DEV', '').split(',')
-CORS_ALLOWED_WHITELIST=[]
-CORS_ALLOWED_WHITELIST.extend(
-    filter(
-        None,
-        os.environ.get('CORS_ALLOWED_WHITELIST_DEV', '').split(','),
-    )
-)
+CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS_DEPLOY')
 
-CSRF_TRUSTED_ORIGINS=[]
-CSRF_TRUSTED_ORIGINS.extend(
-    filter(
-        None,
-        os.environ.get('CSRF_TRUSTED_ORIGINS_DEV', '').split(','),
-    )
-)
+CORS_ALLOWED_WHITELIST = env.list('CORS_ALLOWED_WHITELIST_DEPLOY')
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS_DEPLOY')
 
 
 REST_FRAMEWORK = {
