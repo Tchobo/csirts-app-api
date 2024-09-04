@@ -8,7 +8,8 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - static-data:/vol/web
+      - static_volume:/vol/web/static
+      - media_volume:/vol/web/media
     env_file:
       - .env
     command: >
@@ -46,4 +47,5 @@ services:
 
 volumes:
   postgres-data:
-  static-data:
+  static_volume:
+  media_volume:
