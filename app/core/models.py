@@ -59,6 +59,7 @@ class Csirt(models.Model):
         on_delete=models.CASCADE
     )
     name = models.CharField(max_length=255)
+    country = models.CharField(max_length=255, null=True, blank=False)
     description = models.TextField(blank=True)
     location = models.JSONField(null=False, blank=False)
     contact  = models.CharField(max_length=30, null=True, blank=True)

@@ -14,7 +14,7 @@ class CsirtSerializer(serializers.ModelSerializer):
     class Meta:
         model=Csirt
         fields = [
-            'id', 'name', 'location', 'contact', 'website',
+            'id', 'name', 'location', 'contact', 'website', 'country',
             ]
         read_only_fields=['id']
 

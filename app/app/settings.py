@@ -32,18 +32,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-try:
-    DEBUG = os.environ.get('DEBUG')
-except ValueError:
-    DEBUG = False
+DEBUG = bool(int(os.getenv('DEBUG', 0)))
 
-ALLOWED_HOSTS = []
-ALLOWED_HOSTS.extend(
-    filter(
-        None,
-        os.environ.get('ALLOWED_HOSTS_DEPLOY', '').split(','),
-    )
-)
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS_DEV', '').split()
+
 
 
 
@@ -63,11 +55,14 @@ INSTALLED_APPS = [
     'user',
     'csirt',
     'django_filters',
+    'corsheaders',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -100,19 +95,19 @@ WSGI_APPLICATION = 'app.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'HOST': os.environ.get('DB_HOST'),
-#         'NAME': os.environ.get('DB_NAME'),
-#         'USER': os.environ.get('DB_USER'),
-#         'PASSWORD': os.environ.get('DB_PASS'),
-#     }
-# }
+#      'default': {
+#          'ENGINE': 'django.db.backends.postgresql',
+#          'HOST': os.environ.get('DB_HOST'),
+#          'NAME': os.environ.get('DB_NAME'),
+#          'USER': os.environ.get('DB_USER'),
+#          'PASSWORD': os.environ.get('DB_PASS'),
+#      }
+
+#  }
 
 DATABASES = {
-   
-      'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
-  }
+   'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+}
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
@@ -163,12 +158,7 @@ AUTH_USER_MODEL = 'core.User'
 
 # CORS
 CORS_ALLOWED_ORIGINS=[]
-CORS_ALLOWED_ORIGINS.extend(
-    filter(
-        None,
-        os.environ.get('CORS_ALLOWED_ORIGINS_DEV', '').split(','),
-    )
-)
+CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS_DEV', '').split(',')
 CORS_ALLOWED_WHITELIST=[]
 CORS_ALLOWED_WHITELIST.extend(
     filter(
@@ -197,3 +187,7 @@ REST_FRAMEWORK = {
 SPECTACULAR_SETTINGS ={
    'COMPONENT_SPLIT_REQUEST':True, 
 }
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ['accept',    'accept-encoding',    'authorization',    'content-type',
+                      'dnt',    'origin',    'user-agent',    'x-csrftoken',    'x-requested-with',]
