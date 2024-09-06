@@ -46,7 +46,7 @@ class CsirtViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         """Retrieve csirts for authenticated user"""
         queryset = self.queryset
-        return queryset.filter(user=self.request.user).order_by('-id').distinct()
+        return queryset
 
     def get_serializer_class(self):
         """Return the serializer class for request."""

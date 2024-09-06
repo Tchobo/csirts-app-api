@@ -17,10 +17,8 @@ RUN python -m venv /py && \
     /py/bin/pip install -r /requirements.txt && \
     apk del .tmp-deps && \ 
     adduser --disabled-password --no-create-home app && \
-    mkdir -p /vol/web/static && \
-    mkdir -p /vol/web/media && \
-    chown -R app:app /vol /app && \ 
-    chmod -R 755 /vol /app 
+    chown -R app:app /app && \ 
+    chmod -R 755 /app 
 
 
 ENV PATH="/py/bin:$PATH"
