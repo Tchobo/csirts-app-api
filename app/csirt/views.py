@@ -50,7 +50,7 @@ class CsirtViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         """Return the serializer class for request."""
-        if self.action =='list':
+        if self.action =='retrieve':
             return serializers.CsirtDetailSerializer
         elif self.action =='upload_image':
             return serializers.CsirtImageSerializer
@@ -62,10 +62,9 @@ class CsirtViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-
     @action(methods=['POST'], detail=True, url_path='upload-image')
     def upload_image(self, request, pk=None):
-        """Upload an image to recipe"""
+        """Upload an image"""
         recipe = self.get_object()
         serializer=self.get_serializer(recipe, data=request.data)
         if serializer.is_valid():

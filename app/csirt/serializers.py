@@ -10,11 +10,12 @@ class CsirtSerializer(serializers.ModelSerializer):
     contact = serializers.EmailField(
         help_text="An Email adress of the csirt company."
     )
+    image = serializers.ImageField(required=False)
     
     class Meta:
         model=Csirt
         fields = [
-            'id', 'name', 'location', 'contact', 'website', 'country',
+            'id', 'name', 'location', 'contact', 'website', 'country', 'image'
             ]
         read_only_fields=['id']
 
@@ -42,8 +43,9 @@ class CsirtDetailSerializer(CsirtSerializer):
 class CsirtImageSerializer(serializers.ModelSerializer):
     """Serializer for uploading images to Csirts."""
 
+    image = serializers.ImageField(required=True)
+
     class Meta:
         model = Csirt
-        fields= ['id', 'image']
+        fields = ['id', 'image']
         read_only_fields = ['id']
-        extra_kwargs = {'image': {'required':'True'}}
