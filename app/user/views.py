@@ -3,18 +3,40 @@ from rest_framework import generics, authentication, permissions
 from user.serializers import UserSerializers, AuthTokenSerializer
 from rest_framework.authtoken.views import  ObtainAuthToken
 from rest_framework.settings import api_settings
+from drf_spectacular.utils import extend_schema
 # Create your views here.
 
+@extend_schema(
+    tags=['auth'],
+    summary='Register a new user',
+    description='Create an account. Returns the created user (id, email, name).',
+)
 class CreateUserView(generics.CreateAPIView):
     """Create a new user in the system"""
 
     serializer_class = UserSerializers
 
+@extend_schema(
+    tags=['auth'],
+    summary='Obtain an auth token',
+    description=(
+        'Exchange email + password for a token. The returned token must be '
+        'sent as `Authorization: Token <token>` on every authenticated call.'
+    ),
+)
 class CreateTokenView(ObtainAuthToken):
     """Create a new auth token for user."""
     serializer_class = AuthTokenSerializer
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
 
+@extend_schema(
+    tags=['auth'],
+    summary='Retrieve or update the current user',
+    description=(
+        'Return the profile of the token bearer (GET) or update it (PUT/PATCH). '
+        'Requires token authentication.'
+    ),
+)
 class ManageUserView(generics.RetrieveUpdateAPIView):
     """Manage the authenticated"""
     serializer_class = UserSerializers

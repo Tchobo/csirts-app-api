@@ -5,7 +5,7 @@ from rest_framework import (viewsets, mixins, status)
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from core.models import Csirt
 from csirt import serializers
@@ -24,22 +24,76 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 @extend_schema_view(
     list=extend_schema(
+        tags=['csirt'],
+        summary='List CSIRTs',
+        description=(
+            'Return every CSIRT in the directory. Public endpoint — no token '
+            'required. Use the `filter` query parameter to search across '
+            'name, country, website, and description in a single call.'
+        ),
         parameters=[
             OpenApiParameter(
                 'filter',
                 OpenApiTypes.STR,
-                description='Filter by any field in the Csirt model'
+                description=(
+                    'Case-insensitive substring match against name, country, '
+                    'website, and description. Example: `?filter=kenya`.'
+                ),
             ),
-        ]
-    )
+        ],
+    ),
+    retrieve=extend_schema(
+        tags=['csirt'],
+        summary='Retrieve a CSIRT',
+        description=(
+            'Return the full detail of a single CSIRT, including its long '
+            'description and image URL. Public endpoint — no token required.'
+        ),
+    ),
+    create=extend_schema(
+        tags=['csirt'],
+        summary='Create a CSIRT',
+        description=(
+            'Register a new CSIRT in the directory. Requires token '
+            'authentication — reserved for platform administrators. '
+            'The `location` field must be a JSON object with numeric '
+            '`latitude` and `longitude` keys.'
+        ),
+    ),
+    update=extend_schema(
+        tags=['csirt'],
+        summary='Update a CSIRT (full)',
+        description='Replace all fields of a CSIRT. Requires token authentication.',
+    ),
+    partial_update=extend_schema(
+        tags=['csirt'],
+        summary='Update a CSIRT (partial)',
+        description='Update a subset of fields. Requires token authentication.',
+    ),
+    destroy=extend_schema(
+        tags=['csirt'],
+        summary='Delete a CSIRT',
+        description='Remove a CSIRT from the directory. Requires token authentication.',
+    ),
+    upload_image=extend_schema(
+        tags=['csirt'],
+        summary='Upload a CSIRT logo/image',
+        description=(
+            'Attach an image to an existing CSIRT (multipart/form-data). '
+            'Requires token authentication.'
+        ),
+    ),
 )
 class CsirtViewSet(viewsets.ModelViewSet):
-    """View fro manager csirt APIs"""
+    """Manage CSIRTs — list, retrieve, create, update, delete, upload image."""
 
     serializer_class = serializers.CsirtDetailSerializer
     queryset = Csirt.objects.all()
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # Public read (GET list/retrieve) so the map + basic CSIRT metadata is
+    # available to guests. Any write action (create/update/delete/upload_image)
+    # still requires a valid token — enforced by IsAuthenticatedOrReadOnly.
+    permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = (MultiFieldFilterBackend,)
 
 

@@ -180,8 +180,29 @@ REST_FRAMEWORK = {
 }
 
 
-SPECTACULAR_SETTINGS ={
-   'COMPONENT_SPLIT_REQUEST':True, 
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'CSIRT Africa API',
+    'DESCRIPTION': (
+        'REST API powering the CSIRT Africa platform — a directory of '
+        'Computer Security Incident Response Teams operating on the African '
+        'continent, exposed through a searchable map and detail views.\n\n'
+        '**Public endpoints** (read-only): map data, CSIRT list and detail.\n\n'
+        '**Authenticated endpoints** (Token auth): create, update, delete '
+        'and image upload — reserved for platform administrators.'
+    ),
+    'VERSION': '1.0.0',
+    'CONTACT': {
+        'name': 'Toussaint Tchodo',
+        'email': 'ricostous@gmail.com',
+        'url': 'https://github.com/Tchobo/csirts-app-api',
+    },
+    'LICENSE': {'name': 'MIT'},
+    'TAGS': [
+        {'name': 'csirt', 'description': 'CSIRT directory — list, filter, retrieve, and manage.'},
+        {'name': 'auth', 'description': 'User accounts and token authentication.'},
+    ],
+    'SERVE_INCLUDE_SCHEMA': False,  # hide the raw schema link from the browsable UI
+    'COMPONENT_SPLIT_REQUEST': True,
 }
 
 CORS_ALLOW_CREDENTIALS = True
