@@ -24,7 +24,7 @@ RUN python -m venv /py && \
 ENV PATH="/py/bin:$PATH"
 
 USER app
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "app.wsgi:application"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && exec gunicorn --bind 0.0.0.0:8000 app.wsgi:application"]
 
 
 

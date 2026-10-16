@@ -30,7 +30,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
-DEBUG = os.environ.get('DEBUG')
+# ``os.environ.get('DEBUG')`` renvoie une STRING ("0", "False", ...) ; en Python
+# toute string non vide est truthy → DEBUG resterait True même avec DEBUG=0 en env,
+# et Django afficherait sa page debug (listant TOUTES les URL patterns) sur 404.
+# ``env.bool()`` parse la string en booléen Python correctement.
+DEBUG = env.bool('DEBUG', default=False)
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS_DEPLOY')
 
@@ -117,6 +121,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {'min_length': 12},
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',

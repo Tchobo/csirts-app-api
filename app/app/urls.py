@@ -37,3 +37,8 @@ if settings.DEBUG:
         settings.MEDIA_URL,
         document_root=settings.MEDIA_ROOT,
     )
+
+# Handler 404 custom : renvoie un JSON ``{"detail": "Not found."}`` au lieu
+# de la page HTML Django (qui, en DEBUG=True, liste toutes les URL patterns).
+# Branché via la variable module-level ``handler404`` reconnue par Django.
+handler404 = "app.views.not_found_handler"

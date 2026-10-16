@@ -1,4 +1,6 @@
 from django.contrib.auth import (get_user_model, authenticate)
+from django.contrib.auth.password_validation import validate_password as django_validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
 
 from rest_framework import serializers
 
@@ -9,12 +11,28 @@ class UserSerializers(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ['email', 'password', 'name']
-        extra_kwargs = {'password':{'write_only':True, 'min_length':5}}
-    
+        # min_length relevé à 12 (OWASP ASVS niveau 1). Les validators Django
+        # (AUTH_PASSWORD_VALIDATORS) ne sont PAS appelés automatiquement par
+        # DRF — on les invoque explicitement dans validate_password ci-dessous.
+        extra_kwargs = {'password': {'write_only': True, 'min_length': 12}}
+
+    def validate_password(self, value):
+        """Branche les ``AUTH_PASSWORD_VALIDATORS`` de settings.py sur
+        toute création / mise à jour d'utilisateur via l'API. Sans cette
+        méthode, DRF ne les appelle pas et un mot de passe faible
+        (ex. ``"password"``, ``"12345678"``, trop similaire à l'email…)
+        passe silencieusement — bug de sécurité majeur.
+        """
+        try:
+            django_validate_password(value)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError(list(exc.messages))
+        return value
+
     def create(self, validated_data):
         """Create and return a user with encrypted password."""
         return get_user_model().objects.create_user(**validated_data)
-    
+
     def update(self, instance, validated_data):
         """Update and return user."""
         password = validated_data.pop('password', None)
