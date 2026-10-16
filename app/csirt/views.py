@@ -98,9 +98,18 @@ class CsirtViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
-        """Retrieve csirts for authenticated user"""
-        queryset = self.queryset
-        return queryset
+        """Return a fresh queryset for every request.
+
+        **Gotcha DRF** : ``self.queryset = Csirt.objects.all()`` au niveau
+        classe est un ``QuerySet`` partagé entre toutes les instances du
+        ViewSet (et tous les threads gunicorn). Retourner ``self.queryset``
+        tel quel **cache le premier résultat évalué** — si la DB était vide
+        au premier appel, tous les GET suivants renvoient ``[]`` même après
+        avoir POST de nouvelles entrées (bug observé en prod oct 2026).
+
+        ``.all()`` force un clone frais → nouvelle évaluation à chaque appel.
+        """
+        return self.queryset.all()
 
     def get_serializer_class(self):
         """Return the serializer class for request."""
